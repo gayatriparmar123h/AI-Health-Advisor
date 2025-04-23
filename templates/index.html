@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Health Advisor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Smart Health Advisor</h2>
+    <form method="POST">
+        <label for="symptoms">Enter Symptoms (comma separated):</label>
+        <input type="text" name="symptoms" class="form-control" required placeholder="e.g. Fever, Cough, Rash">
+        <button type="submit" class="btn btn-primary mt-3">Predict</button>
+    </form>
+
+    {% if prediction %}
+    <h4 class="mt-4">Predicted Disease: {{ prediction }}</h4>
+    <ul class="nav nav-tabs mt-3" id="tabContent">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#med">Medicine</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#dose">Dosage</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#prec">Precautions</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#life">Lifestyle Tips</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#emer">Emergency Signs</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#diet">Diet Recommendation</button></li>
+    </ul>
+    <div class="tab-content border p-3">
+        <div class="tab-pane fade show active" id="med">{{ medicine }}</div>
+        <div class="tab-pane fade" id="dose">{{ dosage }}</div>
+        <div class="tab-pane fade" id="prec">{{ precautions }}</div>
+        <div class="tab-pane fade" id="life">{{ lifestyle }}</div>
+        <div class="tab-pane fade" id="emer">{{ emergency }}</div>
+        <div class="tab-pane fade" id="diet">{{ diet }}</div>
+    </div>
+    <div class="alert alert-info mt-3">{{ availability }}</div>
+    {% endif %}
+
+    <hr class="my-5">
+    <h5>🤖 Chatbot Symptom Checker</h5>
+    <div class="mb-3">
+        <input type="text" id="chatInput" class="form-control" placeholder="Type a symptom...">
+        <button onclick="sendMessage()" class="btn btn-success mt-2">Send</button>
+    </div>
+    <div id="chatResponse" class="alert alert-secondary" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function sendMessage() {
+        const msg = document.getElementById("chatInput").value;
+        fetch("/chatbot", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        }).then(res => res.json()).then(data => {
+            const chatBox = document.getElementById("chatResponse");
+            chatBox.style.display = 'block';
+            chatBox.innerText = data.response;
+        });
+    }
+</script>
+</body>
+</html>
